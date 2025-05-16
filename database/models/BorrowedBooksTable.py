@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.base import Base
 
 
-class BorrowedBooks(Base):
+class BorrowedBooksTable(Base):
     __tablename__ = 'borrowed_books'
 
     id : Mapped[int] = mapped_column(primary_key=True)
