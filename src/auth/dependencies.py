@@ -1,14 +1,16 @@
 import jwt
 from fastapi import Depends, HTTPException, status
+from fastapi.params import Header
 from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError
+from pydantic import EmailStr
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.annotation import Annotated
 
 from src.auth.schemas import TokenData
 from src.auth.utils import verify_password, get_password_hash
-from database import User
+from database.models import UserModel
 from config.config import settings
 from database.db_helper import db_helper
 
@@ -16,32 +18,42 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 async def get_user(
-    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
-    username: str,
+    session: Annotated[AsyncSession, Depends(db_helper.get_session)],
+    email: EmailStr,
 ):
-    stmt = select(User).where(User.username == username)
-    result: User = await session.scalar(stmt)
+    stmt = select(UserModel).where(UserModel.email == email)
+    result: UserModel = await session.execute(stmt)
     return result
 
 
 async def authenticate_user(
-    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
-    username: str,
+    session: Annotated[AsyncSession, Depends(db_helper.get_session)],
+    email: EmailStr,
     password: str,
 ):
-    user: User = await get_user(session, username)
+    user: UserModel = await get_user(session, email)
     if not user:
         return False
-    print(password, user.hashed_password)
-    print(get_password_hash(password))
     if not verify_password(password, user.hashed_password):
         return False
     return user
 
+async def register_user(
+    session: Annotated[AsyncSession, Depends(db_helper.get_session)],
+    email: EmailStr,
+    password: str
+):
+    user = UserModel(email = email, hashed_password = password)
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    return user.id
+
+
 
 async def get_current_user(
-    session: AsyncSession = Depends(db_helper.session_dependency),
-    token: str = Depends(oauth2_scheme),
+    session: Annotated[AsyncSession, Depends(db_helper.get_session)],
+    token = Annotated[str, Header(alias="Authorization")],
 ):
     credentials_exceptions = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
