@@ -24,10 +24,9 @@ async def login(
     if not user_db:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Incorrect email or password",
         )
-    access_token = create_access_token(data={"sub": user_db.id})
+    access_token = create_access_token(data={"sub": str(user_db.id)})
     response.headers["Authorization"] = f"Bearer {access_token}"
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -41,8 +40,8 @@ async def register(
     if user_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already taken",
+            detail="email already registered",
         )
     hashed_password = get_password_hash(user.password)
-    new_user = await register_user(session, hashed_password, user.email)
+    new_user = await register_user(session, user.email,hashed_password)
     return new_user
