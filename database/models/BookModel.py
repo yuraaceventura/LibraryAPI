@@ -15,7 +15,7 @@ class BookModel(Base):
     id : Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
     author: Mapped[str]
-    published_at: Mapped[datetime | None]
+    published_at: Mapped[int]
     ISBN: Mapped[str | None] = mapped_column(unique=True)
     available: Mapped[int] = mapped_column(default=1)
     borrowed = relationship("BorrowedBooksTable", back_populates="book")
