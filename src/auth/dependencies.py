@@ -10,7 +10,7 @@ from sqlalchemy.sql.annotation import Annotated
 
 from src.auth.schemas import TokenData
 from src.auth.utils import verify_password, get_password_hash
-from database.models import UserModel
+from database.models.UserModel import UserModel
 from config.config import settings
 from database.db_helper import db_helper
 
@@ -22,7 +22,7 @@ async def get_user(
     email: EmailStr,
 ):
     stmt = select(UserModel).where(UserModel.email == email)
-    result: UserModel = await session.execute(stmt)
+    result: UserModel = await session.scalar(stmt)
     return result
 
 

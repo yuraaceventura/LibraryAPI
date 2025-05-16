@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 
 from sqlalchemy import CheckConstraint
@@ -12,10 +11,11 @@ class BookModel(Base):
     __table_args__ = (
         CheckConstraint("available >= 0", name="check_in_stock_constraint"),
     )
+
     id : Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
     author: Mapped[str]
     published_at: Mapped[datetime | None]
     ISBN: Mapped[str | None] = mapped_column(unique=True)
     available: Mapped[int] = mapped_column(default=1)
-    borrowed = relationship("borrowed_books", back_populates="book_id")
+    borrowed = relationship("BorrowedBooksTable", back_populates="book")
