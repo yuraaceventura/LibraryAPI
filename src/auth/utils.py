@@ -1,8 +1,11 @@
 from passlib.context import CryptContext
 import datetime
 import jwt
+from sqlalchemy import Select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.config import settings
+from database.models import UserModel
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -26,7 +29,15 @@ def create_access_token(data: dict, expires_delta: datetime.timedelta | None = N
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,
-        settings.jwt.public_key,
-        algorithm=settings.jwt.algorithm,
+        settings.jwt.PUBLIC_KEY,
+        algorithm=settings.jwt.ALGORITHM,
     )
     return encoded_jwt
+
+async def get_user_by_id(session: AsyncSession,
+                         user_id:str
+                         ):
+
+    stmt = Select(UserModel).where(UserModel.id == user_id)
+    user = session.scalar(stmt)
+    return user
