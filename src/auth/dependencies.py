@@ -1,20 +1,18 @@
+from typing import Annotated
+
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.params import Header
-from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError
 from pydantic import EmailStr
-from sqlalchemy import select, Result
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.annotation import Annotated
 
 from src.auth.schemas import TokenData
 from src.auth.utils import verify_password, get_password_hash, get_user_by_id
 from database.models.UserModel import UserModel
 from config.config import settings
 from database.db_helper import db_helper
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 async def get_user(
@@ -38,6 +36,7 @@ async def authenticate_user(
         return False
     return user
 
+
 async def register_user(
     session: Annotated[AsyncSession, Depends(db_helper.get_session)],
     email: EmailStr,
@@ -52,9 +51,10 @@ async def register_user(
 
 
 async def get_current_user(
+    request: Request,
     session: Annotated[AsyncSession, Depends(db_helper.get_session)],
-    token = Annotated[str, Header(alias="Authorization")],
 ):
+    token = request.cookies.get("access_token")
     credentials_exceptions = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -63,7 +63,7 @@ async def get_current_user(
 
     try:
         payload = jwt.decode(
-            token, settings.jwt.public_key, algorithms=[settings.jwt.algorithm]
+            token, settings.jwt.PUBLIC_KEY, algorithms=[settings.jwt.ALGORITHM]
         )
         sub: str = payload.get("sub")
         if sub is None:
