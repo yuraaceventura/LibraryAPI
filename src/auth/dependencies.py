@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.annotation import Annotated
 
 from src.auth.schemas import TokenData
-from src.auth.utils import verify_password, get_password_hash
+from src.auth.utils import verify_password, get_password_hash, get_user_by_id
 from database.models.UserModel import UserModel
 from config.config import settings
 from database.db_helper import db_helper
@@ -27,7 +27,7 @@ async def get_user(
 
 
 async def authenticate_user(
-    session: Annotated[AsyncSession, Depends(db_helper.get_session)],
+    session: AsyncSession,
     email: EmailStr,
     password: str,
 ):
@@ -65,17 +65,17 @@ async def get_current_user(
         payload = jwt.decode(
             token, settings.jwt.public_key, algorithms=[settings.jwt.algorithm]
         )
-        username: str = payload.get("sub")
-        if username is None:
+        sub: str = payload.get("sub")
+        if sub is None:
             raise credentials_exceptions
         token_data = TokenData(
-            username=username, access_token=token, token_type="Bearer"
+            sub=sub, access_token=token, token_type="Bearer"
         )
     except PyJWTError:
         raise credentials_exceptions
-    user = await get_user(
+    user = await get_user_by_id(
         session,
-        token_data.username,
+        token_data.sub,
     )
     if user is None:
         raise credentials_exceptions
