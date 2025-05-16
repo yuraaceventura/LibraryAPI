@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response
+from fastapi.security import OAuth2PasswordRequestFormStrict
 from sqlalchemy.ext.asyncio import AsyncSession
 from .dependencies import authenticate_user, get_user, register_user, get_current_user
 from .schemas import UserCreate, Token
@@ -27,7 +28,13 @@ async def login(
             detail="Incorrect email or password",
         )
     access_token = create_access_token(data={"sub": str(user_db.id)})
-    response.headers["Authorization"] = f"Bearer {access_token}"
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        max_age=3600
+    )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -45,3 +52,4 @@ async def register(
     hashed_password = get_password_hash(user.password)
     new_user = await register_user(session, user.email,hashed_password)
     return new_user
+
