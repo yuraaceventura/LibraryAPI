@@ -17,7 +17,7 @@ class BorrowedBooksTable(Base):
     reader_id: Mapped[int] = mapped_column(ForeignKey("readers.id"))
     book_id: Mapped[int] = mapped_column(ForeignKey("books.id"))
     borrowed_at : Mapped[datetime] = mapped_column(default=datetime.now())
-    returned_at : Mapped[datetime] = mapped_column(default=None, onupdate=datetime.now())
+    returned_at : Mapped[datetime | None] = mapped_column(default=None, onupdate=datetime.now())
 
     book = relationship(BookModel, back_populates="borrowed")
     reader = relationship(ReaderModel, back_populates="borrowed")
