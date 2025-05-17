@@ -64,7 +64,6 @@ class TestBooksEndpoints:
         (999, status.HTTP_404_NOT_FOUND),
     ])
     async def test_delete_book(self, auth_client, book_id, expected_status):
-        # Сначала создаём книгу
         payload = {
             "title": "To Delete",
             "author": "Author Z",
@@ -104,9 +103,7 @@ class TestBooksEndpoints:
         }
         response = (await auth_client.post("/books/", json=payload))
         body = response.json()
-        print(body)
         book_id = body["id"]
-        print(book_id)
         response = await auth_client.patch(
             f"/books/{book_id}",
             json=update_data
