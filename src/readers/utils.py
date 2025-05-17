@@ -10,7 +10,7 @@ from src.readers.schemas import ReaderBase, ReaderUpdate
 async def get_readers(session: AsyncSession):
     stmt = select(ReaderModel).order_by(ReaderModel.id)
     result:Result = await session.execute(stmt)
-    readers = await result.scalars().all()
+    readers = result.scalars().all()
     return readers
 
 async def create_reader(session: AsyncSession, data: ReaderBase):
@@ -21,23 +21,27 @@ async def create_reader(session: AsyncSession, data: ReaderBase):
         await session.refresh(reader)
         return reader
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="email must be unique")
-
+        return False
 
 async def get_reader(session: AsyncSession, reader_id: int):
     stmt = select(ReaderModel).where(ReaderModel.id == reader_id)
     reader = await session.execute(stmt)
     reader = reader.scalar_one_or_none()
-    return reader
+    if reader is not None:
+        return reader
+    else:
+        return False
+
 
 async def delete_reader(session: AsyncSession, book_id: int):
     reader = await get_reader(session, book_id)
     if reader:
         await session.delete(reader)
         await session.commit()
-        return reader.name
+        return reader
     else:
         return False
+
 
 async def update_reader(session: AsyncSession, reader_id: int, data: ReaderUpdate):
     reader = await get_reader(session, reader_id)
