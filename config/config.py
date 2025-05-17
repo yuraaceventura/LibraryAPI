@@ -24,6 +24,9 @@ class DatabaseSettings(SettingsBase):
     def get_url(self):
         return f"postgresql+asyncpg://{self.USER}:{self.PASS}@{self.HOST}:{self.PORT}/{self.NAME}"
 
+    def get_url_test(self):
+        return f"postgresql+asyncpg://{self.USER}:{self.PASS}@{self.HOST}:{self.PORT}/test"
+
     model_config = SettingsConfigDict(env_prefix="DB_")
 
 class JWTSettings(SettingsBase):
