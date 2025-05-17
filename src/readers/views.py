@@ -12,11 +12,11 @@ from src.readers.schemas import ReaderUpdate, ReaderBase
 router = APIRouter(prefix="/readers", tags=["Readers"])
 
 
-@router.get("/", dependencies=[Depends(get_current_user)])
+@router.get("", dependencies=[Depends(get_current_user)])
 async def get_readers(session: Annotated[AsyncSession, Depends(db_helper.get_session)]):
     return await utils.get_readers(session)
 
-@router.post("/", dependencies=[Depends(get_current_user)])
+@router.post("", dependencies=[Depends(get_current_user)])
 async def create_reader(session: Annotated[AsyncSession, Depends(db_helper.get_session)],
                       reader: ReaderBase,
                       ) -> ReaderBase:

@@ -11,11 +11,11 @@ from src.books import utils
 router = APIRouter(prefix="/books", tags=["Books"])
 
 
-@router.get("/", dependencies=[Depends(get_current_user)])
+@router.get("", dependencies=[Depends(get_current_user)])
 async def get_books(session: Annotated[AsyncSession, Depends(db_helper.get_session)]):
     return await utils.get_books(session)
 
-@router.post("/", dependencies=[Depends(get_current_user)])
+@router.post("", dependencies=[Depends(get_current_user)])
 async def create_book(session: Annotated[AsyncSession, Depends(db_helper.get_session)],
                       book: BookBase,
                       ) -> BookBase:

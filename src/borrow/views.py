@@ -12,7 +12,7 @@ from src.readers.utils import get_reader
 
 router = APIRouter(tags=["Borrow"], prefix="/borrow")
 
-@router.post("/")
+@router.post("")
 async def borrow_book(session: Annotated[AsyncSession, Depends(db_helper.get_session)],
                  data: BorrowSchema):
     book = await get_book(session, data.book_id)
@@ -47,6 +47,6 @@ async def return_book(session: Annotated[AsyncSession, Depends(db_helper.get_ses
     return Borrow.model_validate(borrow.__dict__)
 
 
-@router.get("/")
+@router.get("")
 async def get_borrows(session: Annotated[AsyncSession, Depends(db_helper.get_session)]):
     return await utils.get_borrows(session)
