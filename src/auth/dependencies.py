@@ -2,17 +2,16 @@ from typing import Annotated
 
 import jwt
 from fastapi import Depends, HTTPException, status, Request
-from fastapi.params import Header
 from jwt import PyJWTError
 from pydantic import EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.schemas import TokenData
-from src.auth.utils import verify_password, get_password_hash, get_user_by_id
-from database.models.UserModel import UserModel
 from config.config import settings
 from database.db_helper import db_helper
+from database.models.UserModel import UserModel
+from src.auth.schemas import TokenData
+from src.auth.utils import verify_password, get_user_by_id
 
 
 async def get_user(

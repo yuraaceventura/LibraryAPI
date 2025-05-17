@@ -1,6 +1,3 @@
-import asyncio
-
-import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -10,7 +7,7 @@ from database.base import Base
 from main import app
 
 
-@pytest_asyncio.fixture(scope="session", autouse=True)
+@pytest_asyncio.fixture(loop_scope="session", autouse=True)
 async def setup_db():
     engine = create_async_engine(settings.database.get_url())
     async with engine.begin() as conn:
@@ -25,15 +22,6 @@ async def setup_db():
 async def client():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    try:
-        loop = asyncio.new_event_loop()
-        yield loop
-    finally:
-        loop.close()
 
 
 @pytest_asyncio.fixture

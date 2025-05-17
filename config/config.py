@@ -1,5 +1,5 @@
 import pathlib
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from pydantic import BaseModel, Field
 from pydantic_settings import SettingsConfigDict, BaseSettings

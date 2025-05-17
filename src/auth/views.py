@@ -1,15 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status, Form, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.db_helper import db_helper
+from database.models.UserModel import UserModel
 from .dependencies import authenticate_user, get_user, register_user
 from .schemas import UserCreate, Token
-from database.models.UserModel import UserModel
 from .utils import (
     get_password_hash,
     create_access_token,
 )
-from database.db_helper import db_helper
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 

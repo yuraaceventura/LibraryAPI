@@ -1,8 +1,9 @@
 from pydantic import EmailStr
-from sqlalchemy import CheckConstraint, String
+from sqlalchemy import String
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from database.base import Base
+
 
 class ReaderModel(Base):
     __tablename__ = 'readers'
