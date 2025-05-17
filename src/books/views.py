@@ -34,7 +34,8 @@ async def delete_book(session: Annotated[AsyncSession, Depends(db_helper.get_ses
         return {"msg": "book deleted successfully",
                 "book" : book}
     else:
-        return {"msg": "Couldn't find this book",}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Couldn't find this book")
 
 
 @router.patch("/{book_id}", dependencies=[Depends(get_current_user)])

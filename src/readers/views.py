@@ -35,7 +35,8 @@ async def delete_reader(session: Annotated[AsyncSession, Depends(db_helper.get_s
         return {"msg": "reader deleted successfully",
                 "reader" : reader}
     else:
-        return {"msg": "Couldn't find this reader",}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Couldn't find this reader")
 
 
 @router.patch("/{reader_id}", dependencies=[Depends(get_current_user)])
@@ -46,5 +47,5 @@ async def update_reader(session: Annotated[AsyncSession, Depends(db_helper.get_s
         reader_updated = await utils.update_reader(session, reader_id, reader)
         return ReaderBase.model_validate(reader_updated.__dict__)
 
-    raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                         detail="Something went wrong")
