@@ -44,14 +44,18 @@ async def get_borrow(session: AsyncSession, borrow_id: int):
 
 
 async def return_book(session: AsyncSession, borrow: BorrowedBooksTable):
-    stmt = update(BorrowedBooksTable).where(BorrowedBooksTable.id == borrow.id).values()
+    stmt = update(BorrowedBooksTable).where(BorrowedBooksTable.id == borrow.id).values().returning(BorrowedBooksTable.book_id)
+    book_id = await session.execute(stmt)
+    stmt = update(BookModel).where(BookModel.id == book_id).values(available=BookModel.available + 1)
     await session.execute(stmt)
     await session.commit()
     await session.refresh(borrow)
     return borrow
+
 
 async def get_borrows(session:AsyncSession):
     stmt = select(BorrowedBooksTable).where(BorrowedBooksTable.returned_at == None)
     result = await session.execute(stmt)
     borrowed_books = result.scalars().all()
     return borrowed_books
+
