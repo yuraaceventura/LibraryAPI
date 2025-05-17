@@ -8,7 +8,7 @@ from config.config import settings
 class DatabaseHelper:
     def __init__(self):
         self.engine = create_async_engine(settings.database.get_url())
-        self.session_factory = async_sessionmaker(bind=self.engine)
+        self.session_factory = async_sessionmaker(bind=self.engine, autocommit=False, autoflush=False)
 
     def get_scoped_session(self):
         return async_scoped_session(self.session_factory, scopefunc=current_task)
