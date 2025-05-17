@@ -1,9 +1,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response
-from fastapi.security import OAuth2PasswordRequestFormStrict
 from sqlalchemy.ext.asyncio import AsyncSession
-from .dependencies import authenticate_user, get_user, register_user, get_current_user
+from .dependencies import authenticate_user, get_user, register_user
 from .schemas import UserCreate, Token
 from database.models.UserModel import UserModel
 from .utils import (
@@ -40,8 +39,9 @@ async def login(
 
 @router.post("/register")
 async def register(
+    user: UserCreate,
     session: AsyncSession = Depends(db_helper.get_session),
-    user: UserCreate = Form()
+
 ):
     user_db: UserModel = await get_user(session, user.email)
     if user_db:
