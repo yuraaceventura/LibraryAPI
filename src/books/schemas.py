@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class BookBase(BaseModel):
@@ -8,13 +8,16 @@ class BookBase(BaseModel):
     ISBN: str | None
     available: int
 
+    model_config = ConfigDict(from_attributes=True)
+
+
 class BookRead(BookBase):
     id: int
 
 
 class BookUpdate(BookBase):
-    title: str | None
-    author: str | None
-    published_at: int | None
-    ISBN: str | None
-    available: int | None
+    title: str | None = None
+    author: str | None = None
+    published_at: int | None = None
+    ISBN: str | None = None
+    available: int | None = None

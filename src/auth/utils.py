@@ -39,5 +39,5 @@ async def get_user_by_id(session: AsyncSession,
                          ):
 
     stmt = Select(UserModel).where(UserModel.id == user_id)
-    user = session.scalar(stmt)
+    user = await session.scalar(stmt)
     return user

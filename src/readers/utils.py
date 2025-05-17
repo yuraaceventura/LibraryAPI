@@ -10,7 +10,7 @@ from src.readers.schemas import ReaderBase, ReaderUpdate
 async def get_readers(session: AsyncSession):
     stmt = select(ReaderModel).order_by(ReaderModel.id)
     result:Result = await session.execute(stmt)
-    readers = result.scalars().all()
+    readers = await result.scalars().all()
     return readers
 
 async def create_reader(session: AsyncSession, data: ReaderBase):
