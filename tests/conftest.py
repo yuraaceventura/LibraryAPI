@@ -10,7 +10,7 @@ from main import app
 
 @pytest_asyncio.fixture(loop_scope="session", autouse=True)
 async def setup_db():
-    engine = create_async_engine(settings.database.get_url_test())
+    engine = create_async_engine(settings.database.get_url())
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
     async with engine.begin() as conn:
@@ -20,7 +20,7 @@ async def setup_db():
 
 @pytest_asyncio.fixture(autouse=True, scope="function")
 async def truncate_tables():
-    engine = create_async_engine(settings.database.get_url_test())
+    engine = create_async_engine(settings.database.get_url())
     async with engine.begin() as conn:
         for table in reversed(Base.metadata.sorted_tables):
             await conn.execute(text(f'TRUNCATE "{table.name}" RESTART IDENTITY CASCADE;'))
@@ -29,7 +29,7 @@ async def truncate_tables():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine(settings.database.get_url_test())
+    engine = create_async_engine(settings.database.get_url())
     session_maker = async_sessionmaker(
         engine, expire_on_commit=False
     )
