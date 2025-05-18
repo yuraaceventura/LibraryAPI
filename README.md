@@ -16,4 +16,5 @@ Also there are tests covering most of API enpoints done with pytest and httpx.
 
 Instead of hiding my secrets i used .env.example as main .env file, just so it is easier to copy.
 
-Soon will add Docker-compose to build this app with one command.
+UPD:
+Added Docker, now you can run this app with postgres db with one command docker-compose up --build
