@@ -6,9 +6,9 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN pip install poetry && \
     poetry config virtualenvs.create false && \
-    poetry install --only=main
+    poetry install --only=main --no-root
 
 # Копирование исходного кода
 COPY . .
 
-CMD ["python", "main.py"]
+CMD alembic upgrade head && python main.py

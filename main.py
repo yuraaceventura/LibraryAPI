@@ -1,9 +1,15 @@
+from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI
+
+from database.base import Base
+from database.db_helper import db_helper
 from src.auth.views import router as auth_router
 from src.books.views import router as books_router
 from src.readers.views import router as readers_router
 from src.borrow.views import router as borrow_router
+
 
 app = FastAPI()
 
