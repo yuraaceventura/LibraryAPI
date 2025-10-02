@@ -2,7 +2,7 @@ from typing import Annotated
 
 import jwt
 from fastapi import Depends, HTTPException, status, Request
-from jwt import PyJWTError
+from jwt.exceptions import JWTException
 from pydantic import EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -70,7 +70,7 @@ async def get_current_user(
         token_data = TokenData(
             sub=sub, access_token=token, token_type="Bearer"
         )
-    except PyJWTError:
+    except JWTException:
         raise credentials_exceptions
     user = await get_user_by_id(
         session,
