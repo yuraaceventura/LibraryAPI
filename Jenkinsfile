@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:slim' // Or any other suitable Python image
-        }
-    }
+    agent any
     
     stages {
         stage('git gheckout') {
@@ -14,16 +10,25 @@ pipeline {
 
         stage ("Installing dependencies") {
             steps {
-                sh "pip install poetry"
-                sh "poetry config virtualenvs.create false"
-                sh "poetry install --only=main --no-root"
+                sh '''
+                    sudo apt-get update
+                    sudo apt-get install -y python3 python3-pip
+                    pip install poetry
+                    poetry config virtualenvs.create false
+                    poetry install --only=main --no-root
+                    '''
             }
         }
 
         stage('unit-test') {
             steps {
                 sh "pip install -r requirements.txt"
-                sh 'pytest ./tests'
+                sh 'pytest --junitxml=test-results.xml'
+            }
+            post {
+                always {
+                    junit 'test-results.xml'
+                }
             }
         }
     }
