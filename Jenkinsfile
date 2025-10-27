@@ -10,6 +10,7 @@ pipeline {
 
         stage('unit-test') {
             steps {
+                sh "pip install -r requirements.txt"
                 sh 'pytest ./tests'
             }
         }
