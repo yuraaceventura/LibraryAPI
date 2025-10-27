@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent { 
+        docker { 
+            image 'python:3.9-slim' 
+        } 
+    }
     
     stages {
         stage('git gheckout') {
@@ -11,8 +15,6 @@ pipeline {
         stage ("Installing dependencies") {
             steps {
                 sh '''
-                    sudo apt-get update
-                    sudo apt-get install -y python3 python3-pip
                     pip install poetry
                     poetry config virtualenvs.create false
                     poetry install --only=main --no-root
