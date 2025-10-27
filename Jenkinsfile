@@ -1,8 +1,10 @@
 pipeline {
-    docker {
+    agent {
+        docker {
             image 'python:slim' // Or any other suitable Python image
         }
-
+    }
+    
     stages {
         stage('git gheckout') {
             steps {
