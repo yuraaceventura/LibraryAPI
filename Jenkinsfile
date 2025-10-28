@@ -11,8 +11,9 @@ pipeline {
         stage ("Installing dependencies") {
             steps {
                 sh '''
+                    python3 -m venv .venv
+                    source .venv/bin/activate
                     pip install poetry
-                    poetry config virtualenvs.create false
                     poetry install --only=main --no-root
                     '''
             }
