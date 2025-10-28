@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 import datetime
-import jwt
+
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
