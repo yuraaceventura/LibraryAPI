@@ -19,11 +19,17 @@ pipeline {
             }
         }
 
-        stage('unit-test') {
+        stage("Run APP") {
+            steps {
+                sh '''
+                    docker-compose up -d .
+                '''
+            }
+        }
+        stage('API-test') {
             steps {
                 sh  '''
-                    . /var/jenkins_home/workspace/my_pipe_master/.venv/bin/activate
-                    pip install -r requirements.txt
+                    . .venv/bin/activate 
                     pytest --junitxml=test-results.xml
                     '''
             }
