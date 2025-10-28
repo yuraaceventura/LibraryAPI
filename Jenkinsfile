@@ -22,7 +22,7 @@ pipeline {
         stage("Run APP") {
             steps {
                 sh '''
-                    docker-compose up -d .
+                    docker-compose up -d
                 '''
             }
         }
