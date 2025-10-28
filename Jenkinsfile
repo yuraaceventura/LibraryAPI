@@ -31,7 +31,7 @@ pipeline {
                 sh  '''
                     . .venv/bin/activate 
                     pip install pytest
-                    pip install pytest-asynio
+                    pip install pytest-asyncio
                     pytest --junitxml=test-results.xml
                     '''
             }
