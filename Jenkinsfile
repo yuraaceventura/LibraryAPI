@@ -21,9 +21,11 @@ pipeline {
 
         stage('unit-test') {
             steps {
-                sh ". .venv/bin/activate"
-                sh "pip install -r requirements.txt"
-                sh 'pytest --junitxml=test-results.xml'
+                sh  '''
+                    . /var/jenkins_home/workspace/my_pipe_master/.venv/bin/activate
+                    pip install -r requirements.txt
+                    pytest --junitxml=test-results.xml
+                    '''
             }
             post {
                 always {
